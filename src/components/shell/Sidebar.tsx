@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import {
   ArrowLeftRight,
   FileText,
@@ -9,6 +9,9 @@ import {
   Settings,
   Users,
 } from 'lucide-react';
+import { useAppDispatch } from '@/app/hooks';
+import { logout } from '@/features/auth/authSlice';
+import { clearSelectedHousehold } from '@/features/household/householdSlice';
 
 const navigation = [
   {
@@ -44,6 +47,16 @@ const navigation = [
 ];
 
 const Sidebar = () => {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
+  const handleLogout = () => {
+    dispatch(logout());
+    dispatch(clearSelectedHousehold());
+
+    navigate('/login', { replace: true });
+  };
+
   return (
     <aside className="hidden w-64 shrink-0 flex-col border-r border-black/5 bg-white lg:flex">
       {/* Brand */}
@@ -129,7 +142,8 @@ const Sidebar = () => {
 
           <button
             type="button"
-            className="group mt-1 flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition-all hover:bg-red-50 hover:text-red-600"
+            onClick={handleLogout}
+            className="group mt-1 flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition-all hover:bg-red-50 hover:text-red-600"
           >
             <LogOut
               className="size-4 text-slate-400 transition-colors group-hover:text-red-500"

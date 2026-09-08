@@ -1,11 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import {
-  ArrowRight,
-  Check,
-  Home,
-  Plus,
-  Users,
-} from 'lucide-react';
+import { ArrowRight, Check, Home, Plus, Users } from 'lucide-react';
 
 import { useGetHouseholdsQuery } from '@/features/household/householdApi';
 import { useAppDispatch } from '@/app/hooks';
@@ -25,17 +19,11 @@ const Households = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const {
-    data,
-    isLoading,
-    isError,
-  } = useGetHouseholdsQuery();
+  const { data, isLoading, isError } = useGetHouseholdsQuery();
 
   const households = data?.data.households ?? [];
 
-  const handleSelectHousehold = (
-    household: (typeof households)[number]
-  ) => {
+  const handleSelectHousehold = (household: (typeof households)[number]) => {
     dispatch(setSelectedHousehold(household));
 
     navigate('/dashboard', {
@@ -48,10 +36,7 @@ const Households = () => {
       <main className="flex min-h-svh items-center justify-center bg-[#f8f9f6] px-4">
         <div className="flex flex-col items-center text-center">
           <div className="flex size-12 items-center justify-center rounded-2xl bg-[#d5ebaa] text-[#173f35]">
-            <Home
-              className="size-5"
-              strokeWidth={1.8}
-            />
+            <Home className="size-5" strokeWidth={1.8} />
           </div>
 
           <p className="mt-4 text-sm font-medium text-slate-700">
@@ -72,19 +57,13 @@ const Households = () => {
         <Card className="w-full max-w-md rounded-3xl border-red-100 shadow-sm">
           <CardHeader className="text-center">
             <div className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-red-50 text-red-600">
-              <Home
-                className="size-5"
-                strokeWidth={1.8}
-              />
+              <Home className="size-5" strokeWidth={1.8} />
             </div>
 
-            <CardTitle className="mt-2 text-xl">
-              Something went wrong
-            </CardTitle>
+            <CardTitle className="mt-2 text-xl">Something went wrong</CardTitle>
 
             <CardDescription>
-              We couldn't load your households.
-              Please try again.
+              We couldn't load your households. Please try again.
             </CardDescription>
           </CardHeader>
 
@@ -110,17 +89,12 @@ const Households = () => {
             {/* Brand */}
             <div className="mb-6 flex items-center gap-1 text-lg font-semibold tracking-tight text-[#173f35]">
               <span className="flex size-9 items-center justify-center rounded-xl bg-[#d5ebaa] text-[#173f35]">
-                <Home
-                  className="size-4"
-                  strokeWidth={2}
-                />
+                <Home className="size-4" strokeWidth={2} />
               </span>
 
               <span>
                 HomeSplit
-                <span className="text-[#51705d]">
-                  .
-                </span>
+                <span className="text-[#51705d]">.</span>
               </span>
             </div>
 
@@ -133,9 +107,8 @@ const Households = () => {
             </h1>
 
             <p className="mt-3 max-w-lg text-sm leading-6 text-slate-500 sm:text-base">
-              Select the household you want to manage.
-              Your expenses, bills, balances, and members
-              will be organized here.
+              Select the household you want to manage. Your expenses, bills,
+              balances, and members will be organized here.
             </p>
           </div>
 
@@ -144,11 +117,7 @@ const Households = () => {
             type="button"
             className="h-11 shrink-0 rounded-xl bg-[#173f35] px-5 font-semibold text-white shadow-sm hover:bg-[#245646]"
           >
-            <Plus
-              className="size-4"
-              strokeWidth={2}
-            />
-
+            <Plus className="size-4" strokeWidth={2} />
             Create Household
           </Button>
         </div>
@@ -157,17 +126,12 @@ const Households = () => {
         {households.length > 0 && (
           <div className="mb-4 flex items-center gap-2">
             <div className="flex size-7 items-center justify-center rounded-lg bg-[#d5ebaa] text-[#173f35]">
-              <Users
-                className="size-3.5"
-                strokeWidth={2}
-              />
+              <Users className="size-3.5" strokeWidth={2} />
             </div>
 
             <p className="text-sm font-medium text-slate-600">
               {households.length}{' '}
-              {households.length === 1
-                ? 'household'
-                : 'households'}
+              {households.length === 1 ? 'household' : 'households'}
             </p>
           </div>
         )}
@@ -177,10 +141,7 @@ const Households = () => {
           <Card className="overflow-hidden rounded-3xl border-slate-200 bg-white shadow-sm">
             <CardContent className="flex flex-col items-center px-6 py-14 text-center sm:py-20">
               <div className="flex size-16 items-center justify-center rounded-2xl bg-[#f1f5eb] text-[#173f35]">
-                <Home
-                  className="size-7"
-                  strokeWidth={1.7}
-                />
+                <Home className="size-7" strokeWidth={1.7} />
               </div>
 
               <h2 className="mt-5 text-xl font-semibold tracking-tight text-slate-900">
@@ -188,19 +149,15 @@ const Households = () => {
               </h2>
 
               <p className="mt-2 max-w-sm text-sm leading-6 text-slate-500">
-                Create your first household and start
-                keeping shared expenses organized.
+                Create your first household and start keeping shared expenses
+                organized.
               </p>
 
               <Button
                 type="button"
                 className="mt-6 h-11 rounded-xl bg-[#173f35] px-6 font-semibold text-white hover:bg-[#245646]"
               >
-                <Plus
-                  className="size-4"
-                  strokeWidth={2}
-                />
-
+                <Plus className="size-4" strokeWidth={2} />
                 Create Household
               </Button>
             </CardContent>
@@ -219,17 +176,11 @@ const Households = () => {
                 <CardHeader className="px-5 pt-5 pb-3">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-[#f1f5eb] text-[#173f35] transition-colors group-hover:bg-[#d5ebaa]">
-                      <Home
-                        className="size-5"
-                        strokeWidth={1.8}
-                      />
+                      <Home className="size-5" strokeWidth={1.8} />
                     </div>
 
                     <span className="flex size-7 items-center justify-center rounded-full bg-[#f1f5eb] text-[#51705d]">
-                      <Check
-                        className="size-3.5"
-                        strokeWidth={2}
-                      />
+                      <Check className="size-3.5" strokeWidth={2} />
                     </span>
                   </div>
 
@@ -259,12 +210,9 @@ const Households = () => {
                   <Button
                     type="button"
                     className="h-11 w-full rounded-xl bg-[#173f35] font-semibold text-white transition-colors hover:bg-[#245646]"
-                    onClick={() =>
-                      handleSelectHousehold(household)
-                    }
+                    onClick={() => handleSelectHousehold(household)}
                   >
                     Open Household
-
                     <ArrowRight
                       className="ml-1 size-4 transition-transform group-hover:translate-x-0.5"
                       strokeWidth={2}

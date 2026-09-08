@@ -1,10 +1,5 @@
 import { useState } from 'react';
-import {
-  Check,
-  ChevronDown,
-  Home,
-  LoaderCircle,
-} from 'lucide-react';
+import { Check, ChevronDown, Home, LoaderCircle } from 'lucide-react';
 
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { setSelectedHousehold } from '@/features/household/householdSlice';
@@ -16,20 +11,14 @@ const HouseholdSelector = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const selectedHousehold = useAppSelector(
-    (state) => state.household.selectedHousehold
+    (state) => state.household.selectedHousehold,
   );
 
-  const {
-    data,
-    isLoading,
-    isError,
-  } = useGetHouseholdsQuery();
+  const { data, isLoading, isError } = useGetHouseholdsQuery();
 
   const households = data?.data.households ?? [];
 
-  const handleSelectHousehold = (
-    household: (typeof households)[number]
-  ) => {
+  const handleSelectHousehold = (household: (typeof households)[number]) => {
     dispatch(setSelectedHousehold(household));
     setIsOpen(false);
   };
@@ -42,14 +31,11 @@ const HouseholdSelector = () => {
         onClick={() => setIsOpen((previous) => !previous)}
         aria-expanded={isOpen}
         aria-haspopup="menu"
-        className="group flex items-center gap-3 rounded-xl px-2 py-1.5 transition-colors hover:bg-[#f1f5eb]"
+        className="group flex items-center cursor-pointer gap-3 rounded-xl px-2 py-1.5 transition-colors hover:bg-[#f1f5eb]"
       >
         {/* Icon */}
         <span className="flex size-9 items-center justify-center rounded-xl bg-[#f1f5eb] text-[#173f35] transition-colors group-hover:bg-[#d5ebaa]">
-          <Home
-            className="size-4"
-            strokeWidth={1.8}
-          />
+          <Home className="size-4" strokeWidth={1.8} />
         </span>
 
         {/* Household Name */}
@@ -126,91 +112,77 @@ const HouseholdSelector = () => {
           )}
 
           {/* Empty */}
-          {!isLoading &&
-            !isError &&
-            households.length === 0 && (
-              <div className="px-4 py-6 text-center">
-                <Home className="mx-auto size-5 text-slate-300" />
+          {!isLoading && !isError && households.length === 0 && (
+            <div className="px-4 py-6 text-center">
+              <Home className="mx-auto size-5 text-slate-300" />
 
-                <p className="mt-2 text-sm font-medium text-slate-600">
-                  No households found.
-                </p>
+              <p className="mt-2 text-sm font-medium text-slate-600">
+                No households found.
+              </p>
 
-                <p className="mt-1 text-xs text-slate-400">
-                  Create or join a household to get started.
-                </p>
-              </div>
-            )}
+              <p className="mt-1 text-xs text-slate-400">
+                Create or join a household to get started.
+              </p>
+            </div>
+          )}
 
           {/* Household List */}
-          {!isLoading &&
-            !isError &&
-            households.length > 0 && (
-              <div className="max-h-72 overflow-y-auto p-2">
-                {households.map((household) => {
-                  const isSelected =
-                    selectedHousehold?.id === household.id;
+          {!isLoading && !isError && households.length > 0 && (
+            <div className="max-h-72 overflow-y-auto p-2">
+              {households.map((household) => {
+                const isSelected = selectedHousehold?.id === household.id;
 
-                  return (
-                    <button
-                      key={household.id}
-                      type="button"
-                      role="menuitem"
-                      onClick={() =>
-                        handleSelectHousehold(household)
-                      }
+                return (
+                  <button
+                    key={household.id}
+                    type="button"
+                    role="menuitem"
+                    onClick={() => handleSelectHousehold(household)}
+                    className={[
+                      'flex w-full items-center gap-3 cursor-pointer rounded-xl px-3 py-3 text-left transition-colors',
+                      isSelected ? 'bg-[#f1f5eb]' : 'hover:bg-slate-50',
+                    ].join(' ')}
+                  >
+                    {/* Icon */}
+                    <span
                       className={[
-                        'flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition-colors',
+                        'flex size-9 shrink-0 items-center justify-center rounded-xl transition-colors',
                         isSelected
-                          ? 'bg-[#f1f5eb]'
-                          : 'hover:bg-slate-50',
+                          ? 'bg-[#d5ebaa] text-[#173f35]'
+                          : 'bg-slate-100 text-slate-500',
                       ].join(' ')}
                     >
-                      {/* Icon */}
-                      <span
+                      <Home className="size-4" strokeWidth={1.8} />
+                    </span>
+
+                    {/* Details */}
+                    <div className="min-w-0 flex-1">
+                      <p
                         className={[
-                          'flex size-9 shrink-0 items-center justify-center rounded-xl transition-colors',
-                          isSelected
-                            ? 'bg-[#d5ebaa] text-[#173f35]'
-                            : 'bg-slate-100 text-slate-500',
+                          'truncate text-sm font-semibold',
+                          isSelected ? 'text-[#173f35]' : 'text-slate-700',
                         ].join(' ')}
                       >
-                        <Home
-                          className="size-4"
-                          strokeWidth={1.8}
-                        />
-                      </span>
+                        {household.name}
+                      </p>
 
-                      {/* Details */}
-                      <div className="min-w-0 flex-1">
-                        <p
-                          className={[
-                            'truncate text-sm font-semibold',
-                            isSelected
-                              ? 'text-[#173f35]'
-                              : 'text-slate-700',
-                          ].join(' ')}
-                        >
-                          {household.name}
-                        </p>
+                      <p className="mt-0.5 text-xs text-slate-400">
+                        {household.currency}
+                      </p>
+                    </div>
 
-                        <p className="mt-0.5 text-xs text-slate-400">
-                          {household.currency}
-                        </p>
-                      </div>
-
-                      {/* Selected */}
-                      {isSelected && (
-                        <Check
-                          className="size-4 shrink-0 text-[#51705d]"
-                          strokeWidth={2.2}
-                        />
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            )}
+                    {/* Selected */}
+                    {isSelected && (
+                      <Check
+                        className="size-4 shrink-0 text-[#51705d]"
+                        strokeWidth={2.2}
+                      />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
       )}
     </div>

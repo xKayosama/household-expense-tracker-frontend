@@ -13,8 +13,21 @@ export interface DashboardBalance {
   net: number;
 }
 
+export interface ExpenseParticipants {
+  user: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    avatar?: string;
+  };
+  amount: number;
+  percentage: number | null;
+}
+
 export interface DashboardExpense {
   _id: string;
+  householdId: string;
   description: string;
   amount: number;
   category: string;
@@ -22,8 +35,13 @@ export interface DashboardExpense {
     _id: string;
     firstName: string;
     lastName: string;
+    emailL: string;
+    avatar: string;
   };
+  splitType: string;
+  participants: ExpenseParticipants[];
   date: string;
+  notes: string;
 }
 
 export interface DashboardBill {
@@ -63,13 +81,10 @@ export interface DashboardResponse {
 export const dashboardApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getDashboard: builder.query<DashboardResponse, string>({
-      query: (householdId) =>
-        `/households/${householdId}/dashboard`,
+      query: (householdId) => `/households/${householdId}/dashboard`,
       providesTags: ['Dashboard'],
     }),
   }),
 });
 
-export const {
-  useGetDashboardQuery,
-} = dashboardApi;
+export const { useGetDashboardQuery } = dashboardApi;
