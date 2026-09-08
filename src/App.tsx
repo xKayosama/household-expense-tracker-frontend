@@ -4,6 +4,7 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 import Login from './pages/Login';
 import Households from './pages/Households';
 import Dashboard from './pages/Dashboard';
+import Expenses from './pages/Expenses';
 
 import AppShell from './components/shell/AppShell';
 
@@ -22,6 +23,7 @@ function App() {
           <Route path="/households" element={<Households />} />
           <Route element={<AppShell />}>
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/expenses" element={<Expenses />} />
           </Route>
         </Route>
       </Routes>

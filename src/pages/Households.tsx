@@ -115,7 +115,8 @@ const Households = () => {
           {/* Create Household */}
           <Button
             type="button"
-            className="h-11 shrink-0 rounded-xl bg-[#173f35] px-5 font-semibold text-white shadow-sm hover:bg-[#245646]"
+            className="rounded-xl px-6"
+            size='xl'
           >
             <Plus className="size-4" strokeWidth={2} />
             Create Household
@@ -155,7 +156,8 @@ const Households = () => {
 
               <Button
                 type="button"
-                className="mt-6 h-11 rounded-xl bg-[#173f35] px-6 font-semibold text-white hover:bg-[#245646]"
+                className="mt-6 rounded-xl px-6 font-semibold"
+                size='xl'
               >
                 <Plus className="size-4" strokeWidth={2} />
                 Create Household
@@ -209,7 +211,8 @@ const Households = () => {
 
                   <Button
                     type="button"
-                    className="h-11 w-full rounded-xl bg-[#173f35] font-semibold text-white transition-colors hover:bg-[#245646]"
+                    className="w-full rounded-xl font-semibold"
+                    size='xl'
                     onClick={() => handleSelectHousehold(household)}
                   >
                     Open Household

@@ -115,7 +115,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="mx-auto w-full  space-y-8">
+    <div className="mx-auto w-full max-w-8xl space-y-8">
       {/* Header */}
       <div>
         <p className="text-xs font-semibold tracking-[0.18em] text-[#51705d] uppercase">
@@ -344,7 +344,7 @@ const Dashboard = () => {
               <Button
                 type="button"
                 variant="ghost"
-                className="hidden text-xs font-semibold text-[#51705d] hover:bg-[#f1f5eb] hover:text-[#173f35] sm:flex"
+                className="hidden text-xs font-semibold sm:flex"
               >
                 View all
                 <ArrowRight className="ml-1 size-3.5" strokeWidth={2} />

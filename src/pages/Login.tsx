@@ -250,7 +250,7 @@ const Login = () => {
 
                 <Button
                   type="submit"
-                  className="h-12 w-full rounded-xl bg-[#173f35] text-sm font-semibold text-white hover:bg-[#245646] focus-visible:ring-[#51705d]/30"
+                  className="h-12 w-full rounded-xl text-sm font-semibold"
                   disabled={isLoading}
                 >
                   {isLoading ? (
