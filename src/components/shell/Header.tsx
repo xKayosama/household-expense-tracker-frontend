@@ -1,17 +1,13 @@
-import {
-  UserCircle,
-} from 'lucide-react';
+import { UserCircle } from 'lucide-react';
 
 import { useAppSelector } from '@/app/hooks';
 import HouseholdSelector from '@/features/household/components/HouseholdSelector';
 
 const Header = () => {
-  const user = useAppSelector(
-    (state) => state.auth.user
-  );
+  const user = useAppSelector((state) => state.auth.user);
 
   return (
-    <header className="relative flex h-16 shrink-0 items-center justify-between border-b border-slate-100 bg-white px-4 sm:px-6">
+    <header className="relative flex h-16 shrink-0 items-center justify-between border-b border-slate-100 bg-white px-4 sm:pr-5 sm:pl-3">
       {/* Household */}
       <HouseholdSelector />
 
@@ -19,14 +15,10 @@ const Header = () => {
       <div className="flex items-center gap-3">
         <div className="hidden text-right sm:block">
           <p className="text-sm font-semibold text-slate-900">
-            {user
-              ? `${user.firstName} ${user.lastName}`
-              : 'User'}
+            {user ? `${user.firstName} ${user.lastName}` : 'User'}
           </p>
 
-          <p className="text-xs text-slate-400">
-            Household Member
-          </p>
+          <p className="text-xs text-slate-400">Household Member</p>
         </div>
 
         {/* Avatar */}

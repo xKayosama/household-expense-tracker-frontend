@@ -1,20 +1,39 @@
 import { Navigate } from 'react-router-dom';
-
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+  ArrowDownLeft,
+  ArrowRight,
+  ArrowUpRight,
+  CalendarDays,
+  Car,
+  CheckCircle2,
+  CircleDollarSign,
+  FileText,
+  Film,
+  HeartPulse,
+  Home,
+  MoreHorizontal,
+  Receipt,
+  ShoppingBag,
+  ShoppingCart,
+  Utensils,
+  Wifi,
+  Zap,
+} from 'lucide-react';
+
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
+import { Button } from '@/components/ui/button';
 
 import { useGetDashboardQuery } from '@/features/dashboard/dashboardApi';
 import { useAppSelector } from '@/app/hooks';
 
 const Dashboard = () => {
-  const householdId = useAppSelector(
-    (state) => state.household.selectedHousehold?.id
+  const selectedHousehold = useAppSelector(
+    (state) => state.household.selectedHousehold,
   );
-  
+
+  const householdId = selectedHousehold?.id;
+
   const {
     currentData: data,
     isFetching,
@@ -30,9 +49,7 @@ const Dashboard = () => {
   if (isFetching && !data) {
     return (
       <div className="flex min-h-64 items-center justify-center">
-        <p className="text-sm text-slate-500">
-          Loading dashboard...
-        </p>
+        <p className="text-sm text-slate-500">Loading dashboard...</p>
       </div>
     );
   }
@@ -40,250 +57,511 @@ const Dashboard = () => {
   if (isError || !data?.success) {
     return (
       <div className="flex min-h-64 items-center justify-center">
-        <p className="text-sm text-red-600">
-          Failed to load dashboard.
-        </p>
+        <p className="text-sm text-red-600">Failed to load dashboard.</p>
       </div>
     );
   }
 
-  const {
-    summary,
-    balances,
-    bills,
-    recentExpenses,
-    upcomingBills,
-  } = data.data;
+  const { summary, balances, bills, recentExpenses, upcomingBills } = data.data;
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-PH', {
+      style: 'currency',
+      currency: selectedHousehold?.currency ?? 'PHP',
+      maximumFractionDigits: 2,
+    }).format(amount);
+  };
+
+  const formatDate = (date: string) => {
+    return new Intl.DateTimeFormat('en-PH', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    }).format(new Date(date));
+  };
+
+  const getCategoryIcon = (category: string) => {
+    switch (category) {
+      case 'FOOD':
+        return Utensils;
+
+      case 'RENT':
+        return Home;
+
+      case 'UTILITIES':
+        return Zap;
+
+      case 'INTERNET':
+        return Wifi;
+
+      case 'TRANSPORTATION':
+        return Car;
+
+      case 'GROCERIES':
+        return ShoppingCart;
+
+      case 'HEALTHCARE':
+        return HeartPulse;
+
+      case 'ENTERTAINMENT':
+        return Film;
+
+      case 'SHOPPING':
+        return ShoppingBag;
+
+      default:
+        return MoreHorizontal;
+    }
+  };
 
   return (
-    <div className="mx-auto w-full max-w-7xl">
+    <div className="mx-auto w-full  space-y-8">
+      {/* Header */}
+      <div>
+        <p className="text-xs font-semibold tracking-[0.18em] text-[#51705d] uppercase">
+          Overview
+        </p>
 
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-            Dashboard
-          </h1>
+        <h1 className="mt-1 text-3xl font-semibold tracking-tight text-slate-900">
+          Dashboard
+        </h1>
 
-          <p className="mt-2 text-sm text-slate-500">
-            Here's an overview of your household expenses.
-          </p>
+        <p className="mt-2 text-sm text-slate-500">
+          Here's an overview of your household expenses.
+        </p>
+      </div>
+
+      {/* Summary Cards */}
+      <section>
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {/* Total Expenses */}
+          <Card className="rounded-2xl border-slate-200 bg-white py-0 shadow-sm">
+            <CardContent className="p-5">
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="text-sm font-medium text-slate-500">
+                    Total Expenses
+                  </p>
+
+                  <p className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">
+                    {formatCurrency(summary.totalExpenses)}
+                  </p>
+                </div>
+
+                <div className="flex size-10 items-center justify-center rounded-xl bg-[#f1f5eb] text-[#173f35]">
+                  <Receipt className="size-5" strokeWidth={1.8} />
+                </div>
+              </div>
+
+              <p className="mt-3 text-xs text-slate-400">
+                All household expenses
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Total Paid */}
+          <Card className="rounded-2xl border-slate-200 bg-white py-0 shadow-sm">
+            <CardContent className="p-5">
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="text-sm font-medium text-slate-500">
+                    Total Paid
+                  </p>
+
+                  <p className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">
+                    {formatCurrency(summary.totalPaid)}
+                  </p>
+                </div>
+
+                <div className="flex size-10 items-center justify-center rounded-xl bg-[#d5ebaa] text-[#173f35]">
+                  <ArrowUpRight className="size-5" strokeWidth={1.8} />
+                </div>
+              </div>
+
+              <p className="mt-3 text-xs text-slate-400">
+                Amount paid by members
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Total Owed */}
+          <Card className="rounded-2xl border-slate-200 bg-white py-0 shadow-sm">
+            <CardContent className="p-5">
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="text-sm font-medium text-slate-500">
+                    Total Owed
+                  </p>
+
+                  <p className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">
+                    {formatCurrency(summary.totalOwed)}
+                  </p>
+                </div>
+
+                <div className="flex size-10 items-center justify-center rounded-xl bg-[#f1f5eb] text-[#51705d]">
+                  <ArrowDownLeft className="size-5" strokeWidth={1.8} />
+                </div>
+              </div>
+
+              <p className="mt-3 text-xs text-slate-400">
+                Total participant shares
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Household Status */}
+          <Card className="rounded-2xl border-0 bg-[#173f35] py-0 text-white shadow-sm">
+            <CardContent className="p-5">
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="text-sm font-medium text-emerald-50/70">
+                    Household Status
+                  </p>
+
+                  <p className="mt-3 text-2xl font-semibold tracking-tight">
+                    {summary.totalExpenses > 0 ? 'Active' : 'All settled'}
+                  </p>
+                </div>
+
+                <div className="flex size-10 items-center justify-center rounded-xl bg-[#d5ebaa] text-[#173f35]">
+                  <CircleDollarSign className="size-5" strokeWidth={1.8} />
+                </div>
+              </div>
+
+              <p className="mt-3 text-xs text-emerald-50/60">
+                Current household activity
+              </p>
+            </CardContent>
+          </Card>
         </div>
+      </section>
 
-        {/* Summary */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {/* Balances + Recent Expenses */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Balances */}
+        <Card className="rounded-2xl border-slate-200 bg-white py-0 shadow-sm">
+          <CardHeader className="border-b border-slate-100 px-5 py-5">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-lg font-semibold tracking-tight">
+                  Balances
+                </CardTitle>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-sm font-medium text-slate-500">
-                Total Expenses
-              </CardTitle>
-            </CardHeader>
+                <p className="mt-1 text-sm text-slate-500">
+                  See who owes and who is owed.
+                </p>
+              </div>
 
-            <CardContent>
-              <p className="text-2xl font-bold text-slate-900">
-                ₱{summary.totalExpenses.toLocaleString()}
-              </p>
-            </CardContent>
-          </Card>
+              <div className="flex size-9 items-center justify-center rounded-xl bg-[#f1f5eb] text-[#173f35]">
+                <CircleDollarSign className="size-4" strokeWidth={1.8} />
+              </div>
+            </div>
+          </CardHeader>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-sm font-medium text-slate-500">
-                Total Paid
-              </CardTitle>
-            </CardHeader>
+          <CardContent className="p-0">
+            {balances.length === 0 ? (
+              <div className="flex min-h-48 flex-col items-center justify-center px-5 text-center">
+                <div className="flex size-11 items-center justify-center rounded-xl bg-[#f1f5eb] text-[#173f35]">
+                  <CircleDollarSign className="size-5" strokeWidth={1.8} />
+                </div>
 
-            <CardContent>
-              <p className="text-2xl font-bold text-slate-900">
-                ₱{summary.totalPaid.toLocaleString()}
-              </p>
-            </CardContent>
-          </Card>
+                <p className="mt-3 text-sm font-semibold text-slate-900">
+                  No balances available
+                </p>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-sm font-medium text-slate-500">
-                Total Owed
-              </CardTitle>
-            </CardHeader>
+                <p className="mt-1 text-xs text-slate-400">
+                  Add an expense to start tracking balances.
+                </p>
+              </div>
+            ) : (
+              <div className="divide-y divide-slate-100">
+                {balances.map((balance) => {
+                  const isOwed = balance.net > 0;
+                  const isOwing = balance.net < 0;
 
-            <CardContent>
-              <p className="text-2xl font-bold text-slate-900">
-                ₱{summary.totalOwed.toLocaleString()}
-              </p>
-            </CardContent>
-          </Card>
-
-        </div>
-
-        {/* Main content */}
-        <div className="mt-6 grid gap-6 lg:grid-cols-2">
-
-          {/* Balances */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Balances</CardTitle>
-            </CardHeader>
-
-            <CardContent>
-              <div className="space-y-4">
-                {balances.map((balance) => (
-                  <div
-                    key={balance.user._id}
-                    className="flex items-center justify-between"
-                  >
-                    <div>
-                      <p className="font-medium text-slate-900">
-                        {balance.user.firstName} {balance.user.lastName}
-                      </p>
-
-                      <p className="text-sm text-slate-500">
-                        Paid ₱{balance.paid.toLocaleString()}
-                      </p>
-                    </div>
-
-                    <p
-                      className={
-                        balance.net >= 0
-                          ? 'font-semibold text-green-600'
-                          : 'font-semibold text-red-600'
-                      }
+                  return (
+                    <div
+                      key={balance.user._id}
+                      className="flex items-center justify-between gap-4 px-5 py-4"
                     >
-                      {balance.net >= 0 ? '+' : '-'}₱
-                      {Math.abs(balance.net).toLocaleString()}
-                    </p>
-                  </div>
-                ))}
+                      <div className="flex min-w-0 items-center gap-3">
+                        <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#173f35] text-sm font-semibold text-[#d5ebaa]">
+                          {balance.user.firstName.charAt(0).toUpperCase()}
+                        </div>
 
-                {!balances.length && (
-                  <p className="text-sm text-slate-500">
-                    No balances available.
-                  </p>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-semibold text-slate-900">
+                            {balance.user.firstName} {balance.user.lastName}
+                          </p>
 
-          {/* Recent Expenses */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent Expenses</CardTitle>
-            </CardHeader>
+                          <p className="mt-0.5 text-xs text-slate-400">
+                            Paid {formatCurrency(balance.paid)}
+                          </p>
+                        </div>
+                      </div>
 
-            <CardContent>
-              <div className="space-y-4">
-                {recentExpenses.map((expense) => (
-                  <div
-                    key={expense._id}
-                    className="flex items-center justify-between"
-                  >
-                    <div>
-                      <p className="font-medium text-slate-900">
-                        {expense.description}
-                      </p>
+                      <div className="text-right">
+                        <p
+                          className={[
+                            'text-sm font-semibold',
+                            isOwed
+                              ? 'text-[#173f35]'
+                              : isOwing
+                                ? 'text-red-600'
+                                : 'text-slate-500',
+                          ].join(' ')}
+                        >
+                          {isOwed ? '+' : isOwing ? '-' : ''}
+                          {formatCurrency(Math.abs(balance.net))}
+                        </p>
 
-                      <p className="text-sm text-slate-500">
-                        {expense.category}
-                      </p>
+                        <p className="mt-0.5 text-[11px] text-slate-400">
+                          {isOwed ? 'Gets back' : isOwing ? 'Owes' : 'Settled'}
+                        </p>
+                      </div>
                     </div>
-
-                    <p className="font-semibold text-slate-900">
-                      ₱{expense.amount.toLocaleString()}
-                    </p>
-                  </div>
-                ))}
-
-                {!recentExpenses.length && (
-                  <p className="text-sm text-slate-500">
-                    No recent expenses.
-                  </p>
-                )}
+                  );
+                })}
               </div>
-            </CardContent>
-          </Card>
+            )}
+          </CardContent>
+        </Card>
 
-          {/* Bills */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Bills</CardTitle>
-            </CardHeader>
+        {/* Recent Expenses */}
+        <Card className="rounded-2xl border-slate-200 bg-white py-0 shadow-sm">
+          <CardHeader className="border-b border-slate-100 px-5 py-5">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-lg font-semibold tracking-tight">
+                  Recent Expenses
+                </CardTitle>
 
-            <CardContent>
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <p className="text-sm text-slate-500">
-                    Pending
-                  </p>
-
-                  <p className="mt-1 text-xl font-bold">
-                    {bills.pending}
-                  </p>
-                </div>
-
-                <div>
-                  <p className="text-sm text-slate-500">
-                    Overdue
-                  </p>
-
-                  <p className="mt-1 text-xl font-bold text-red-600">
-                    {bills.overdue}
-                  </p>
-                </div>
-
-                <div>
-                  <p className="text-sm text-slate-500">
-                    Paid
-                  </p>
-
-                  <p className="mt-1 text-xl font-bold text-green-600">
-                    {bills.paid}
-                  </p>
-                </div>
+                <p className="mt-1 text-sm text-slate-500">
+                  Latest household transactions.
+                </p>
               </div>
-            </CardContent>
-          </Card>
 
-          {/* Upcoming Bills */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Upcoming Bills</CardTitle>
-            </CardHeader>
+              <Button
+                type="button"
+                variant="ghost"
+                className="hidden text-xs font-semibold text-[#51705d] hover:bg-[#f1f5eb] hover:text-[#173f35] sm:flex"
+              >
+                View all
+                <ArrowRight className="ml-1 size-3.5" strokeWidth={2} />
+              </Button>
+            </div>
+          </CardHeader>
 
-            <CardContent>
-              <div className="space-y-4">
+          <CardContent className="p-0">
+            {recentExpenses.length === 0 ? (
+              <div className="flex min-h-48 flex-col items-center justify-center px-5 text-center">
+                <div className="flex size-11 items-center justify-center rounded-xl bg-[#f1f5eb] text-[#173f35]">
+                  <Receipt className="size-5" strokeWidth={1.8} />
+                </div>
+
+                <p className="mt-3 text-sm font-semibold text-slate-900">
+                  No recent expenses
+                </p>
+
+                <p className="mt-1 text-xs text-slate-400">
+                  Your latest shared expenses will appear here.
+                </p>
+              </div>
+            ) : (
+              <div className="divide-y divide-slate-100">
+                {recentExpenses.map((expense) => {
+                  const CategoryIcon = getCategoryIcon(expense.category);
+
+                  return (
+                    <div
+                      key={expense._id}
+                      className="flex items-center justify-between gap-4 px-5 py-4"
+                    >
+                      <div className="flex min-w-0 items-center gap-3">
+                        <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#f1f5eb] text-[#173f35]">
+                          <CategoryIcon className="size-4" strokeWidth={1.8} />
+                        </div>
+
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-semibold text-slate-900">
+                            {expense.description}
+                          </p>
+
+                          <div className="mt-1 flex items-center gap-2 text-xs text-slate-400">
+                            <span>
+                              {expense.paidBy.firstName}{' '}
+                              {expense.paidBy.lastName}
+                            </span>
+
+                            <span>•</span>
+
+                            <span className="flex items-center gap-1">
+                              <CalendarDays
+                                className="size-3"
+                                strokeWidth={1.8}
+                              />
+                              {formatDate(expense.date)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="shrink-0 text-right">
+                        <p className="text-sm font-semibold text-slate-900">
+                          {formatCurrency(expense.amount)}
+                        </p>
+
+                        <p className="mt-0.5 text-[11px] text-slate-400">
+                          {expense.category}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Bills + Upcoming Bills */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Bills */}
+        <Card className="rounded-2xl border-slate-200 bg-white py-0 shadow-sm">
+          <CardHeader className="border-b border-slate-100 px-5 py-5">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-lg font-semibold tracking-tight">
+                  Bills
+                </CardTitle>
+
+                <p className="mt-1 text-sm text-slate-500">
+                  Current household bill status.
+                </p>
+              </div>
+
+              <div className="flex size-9 items-center justify-center rounded-xl bg-[#f1f5eb] text-[#173f35]">
+                <FileText className="size-4" strokeWidth={1.8} />
+              </div>
+            </div>
+          </CardHeader>
+
+          <CardContent className="p-5">
+            <div className="grid grid-cols-3 gap-3">
+              <div className="rounded-xl bg-[#f8f9f6] p-4">
+                <p className="text-xs font-medium text-slate-400">Pending</p>
+
+                <p className="mt-2 text-2xl font-semibold text-slate-900">
+                  {bills.pending}
+                </p>
+
+                <p className="mt-1 text-xs text-slate-400">
+                  {formatCurrency(bills.pendingAmount)}
+                </p>
+              </div>
+
+              <div className="rounded-xl bg-red-50 p-4">
+                <p className="text-xs font-medium text-red-500">Overdue</p>
+
+                <p className="mt-2 text-2xl font-semibold text-red-600">
+                  {bills.overdue}
+                </p>
+
+                <p className="mt-1 text-xs text-red-400">
+                  {formatCurrency(bills.overdueAmount)}
+                </p>
+              </div>
+
+              <div className="rounded-xl bg-[#f1f5eb] p-4">
+                <p className="text-xs font-medium text-[#51705d]">Paid</p>
+
+                <p className="mt-2 text-2xl font-semibold text-[#173f35]">
+                  {bills.paid}
+                </p>
+
+                <p className="mt-1 text-xs text-[#51705d]">
+                  {formatCurrency(bills.paidAmount)}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Upcoming Bills */}
+        <Card className="rounded-2xl border-slate-200 bg-white py-0 shadow-sm">
+          <CardHeader className="border-b border-slate-100 px-5 py-5">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-lg font-semibold tracking-tight">
+                  Upcoming Bills
+                </CardTitle>
+
+                <p className="mt-1 text-sm text-slate-500">
+                  Bills that need your attention.
+                </p>
+              </div>
+
+              <div className="flex size-9 items-center justify-center rounded-xl bg-[#f1f5eb] text-[#173f35]">
+                <CalendarDays className="size-4" strokeWidth={1.8} />
+              </div>
+            </div>
+          </CardHeader>
+
+          <CardContent className="p-0">
+            {upcomingBills.length === 0 ? (
+              <div className="flex min-h-48 flex-col items-center justify-center px-5 text-center">
+                <div className="flex size-11 items-center justify-center rounded-xl bg-[#f1f5eb] text-[#173f35]">
+                  <CheckCircle2 className="size-5" strokeWidth={1.8} />
+                </div>
+
+                <p className="mt-3 text-sm font-semibold text-slate-900">
+                  No upcoming bills
+                </p>
+
+                <p className="mt-1 text-xs text-slate-400">
+                  You're all caught up for now.
+                </p>
+              </div>
+            ) : (
+              <div className="divide-y divide-slate-100">
                 {upcomingBills.map((bill) => (
                   <div
                     key={bill._id}
-                    className="flex items-center justify-between"
+                    className="flex items-center justify-between gap-4 px-5 py-4"
                   >
-                    <div>
-                      <p className="font-medium text-slate-900">
-                        {bill.name}
-                      </p>
+                    <div className="flex min-w-0 items-center gap-3">
+                      <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#f1f5eb] text-[#173f35]">
+                        <FileText className="size-4" strokeWidth={1.8} />
+                      </div>
 
-                      <p className="text-sm text-slate-500">
-                        {new Date(
-                          bill.dueDate
-                        ).toLocaleDateString()}
-                      </p>
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-semibold text-slate-900">
+                          {bill.name}
+                        </p>
+
+                        <p className="mt-1 flex items-center gap-1 text-xs text-slate-400">
+                          <CalendarDays className="size-3" strokeWidth={1.8} />
+                          Due {formatDate(bill.dueDate)}
+                        </p>
+                      </div>
                     </div>
 
-                    <p className="font-semibold text-slate-900">
-                      ₱{bill.amount.toLocaleString()}
-                    </p>
+                    <div className="shrink-0 text-right">
+                      <p className="text-sm font-semibold text-slate-900">
+                        {formatCurrency(bill.amount)}
+                      </p>
+
+                      <span className="mt-1 inline-flex rounded-full bg-[#f1f5eb] px-2 py-0.5 text-[10px] font-semibold text-[#51705d]">
+                        {bill.status}
+                      </span>
+                    </div>
                   </div>
                 ))}
-
-                {!upcomingBills.length && (
-                  <p className="text-sm text-slate-500">
-                    No upcoming bills.
-                  </p>
-                )}
               </div>
-            </CardContent>
-          </Card>
-
-        </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

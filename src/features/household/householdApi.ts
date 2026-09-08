@@ -31,6 +31,4 @@ export const householdApi = api.injectEndpoints({
   }),
 });
 
-export const {
-  useGetHouseholdsQuery,
-} = householdApi;
+export const { useGetHouseholdsQuery } = householdApi;

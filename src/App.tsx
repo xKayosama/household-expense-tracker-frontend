@@ -1,9 +1,5 @@
-import {
-  BrowserRouter,
-  Navigate,
-  Route,
-  Routes,
-} from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import ProtectedRoute from './components/auth/ProtectedRoute';
 
 import Login from './pages/Login';
 import Households from './pages/Households';
@@ -15,26 +11,18 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route
-          path="/"
-          element={<Navigate to="/login" replace />}
-        />
+        <Route path="/" element={<Navigate to="/login" replace />} />
 
-        <Route
-          path="/login"
-          element={<Login />}
-        />
+        <Route path="/login" element={<Login />} />
 
-        <Route
-          path="/households"
-          element={<Households />}
-        />
+        <Route path="/households" element={<Households />} />
 
-        <Route element={<AppShell />}>
-          <Route
-            path="/dashboard"
-            element={<Dashboard />}
-          />
+        {/* Protected */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/households" element={<Households />} />
+          <Route element={<AppShell />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>

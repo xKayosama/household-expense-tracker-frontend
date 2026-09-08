@@ -5,13 +5,13 @@ import Header from './Header';
 
 const AppShell = () => {
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <div className="flex h-dvh overflow-hidden bg-slate-50">
       <Sidebar />
 
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         <Header />
 
-        <main className="flex-1 p-4 sm:p-6">
+        <main className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-4 sm:p-6">
           <Outlet />
         </main>
       </div>
