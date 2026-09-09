@@ -21,7 +21,6 @@ import {
   Check,
   Eye,
   EyeOff,
-  House,
   LoaderCircle,
   LockKeyhole,
   Mail,
@@ -90,11 +89,12 @@ const Login = () => {
             className="pointer-events-none absolute -right-20 top-52 size-72 rounded-full border border-white/10"
             aria-hidden="true"
           />
-          <div className="relative flex items-center gap-1 text-xl font-semibold tracking-tight">
-            <span className="flex size-10 items-center justify-center rounded-xl bg-[#d5ebaa] text-[#173f35]">
-              <House className="size-5" aria-hidden="true" />
-            </span>
-            HomeSplit<span className="text-[#d5ebaa]">.</span>
+          <div className="relative inline-flex w-fit items-center rounded-2xl bg-[#f8f9f6] px-4 py-2">
+            <img
+              src="/homesplit-logo-2.png"
+              alt="HomeSplit"
+              className="h-16  w-auto"
+            />
           </div>
 
           <div className="relative pt-6 sm:pt-8 lg:py-16">

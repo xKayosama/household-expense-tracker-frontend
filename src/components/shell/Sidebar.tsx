@@ -62,13 +62,11 @@ const Sidebar = () => {
       {/* Brand */}
       <div className="flex h-16 shrink-0 items-center border-b border-slate-100 px-6">
         <div className="flex items-center gap-1 text-xl font-semibold tracking-tight text-[#173f35]">
-          <span className="flex size-9 items-center justify-center rounded-xl bg-[#d5ebaa] text-[#173f35]">
-            <span className="text-sm font-bold">H</span>
-          </span>
-
-          <span>
-            HomeSplit<span className="text-[#51705d]">.</span>
-          </span>
+          <img
+            src="/homesplit-logo-2.png"
+            alt="HomeSplit"
+            className="h-16 w-auto"
+          />
         </div>
       </div>
 

@@ -7,7 +7,6 @@ import {
   HeartPulse,
   Home,
   MoreHorizontal,
-  Plus,
   Receipt,
   Search,
   ShoppingBag,
@@ -16,28 +15,37 @@ import {
   Wifi,
   Zap,
 } from 'lucide-react';
-import { format, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
+import { endOfDay, format, isWithinInterval, startOfDay } from 'date-fns';
 import type { DateRange } from 'react-day-picker';
 
 import { useAppSelector } from '@/app/hooks';
+
 import { useGetExpensesQuery } from '@/features/expenses/expenseApi';
+
 import AddExpenseDialog from '@/features/expenses/components/AddExpenseDialog';
+import ExpenseDetailsDialog from '@/features/expenses/components/ExpenseDetailsDialog';
+import EditExpenseDialog from '@/features/expenses/components/EditExpenseDialog';
+import DeleteExpenseDialog from '@/features/expenses/components/DeleteExpenseDialog';
 
 import type { Expense, ExpenseCategory } from '@/features/expenses/types';
 
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
+
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
 } from '@/components/ui/input-group';
+
 import {
   NativeSelect,
   NativeSelectOption,
@@ -74,16 +82,37 @@ const Expenses = () => {
     (state) => state.household.selectedHousehold?.id,
   );
 
+  /*
+   * Filters
+   */
   const [search, setSearch] = useState('');
+
   const [category, setCategory] = useState<ExpenseCategory | 'ALL'>('ALL');
+
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
 
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+
+  /*
+   * Expense Details
+   */
+  const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
+
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+
+  const [isEditOpen, setIsEditOpen] = useState(false);
+
+  /*
+   * Expenses API
+   */
   const { data, isLoading, isFetching, isError } = useGetExpensesQuery(
     {
       householdId: householdId ?? '',
       page: 1,
       limit: 50,
+
       category: category === 'ALL' ? undefined : category,
+
       ...(dateRange?.from && dateRange?.to
         ? {
             startDate: format(dateRange.from, 'yyyy-MM-dd'),
@@ -98,6 +127,9 @@ const Expenses = () => {
 
   const expenses = data?.data.expenses ?? [];
 
+  /*
+   * Filter Expenses
+   */
   const filteredExpenses = useMemo(() => {
     const query = search.trim().toLowerCase();
 
@@ -124,6 +156,9 @@ const Expenses = () => {
     });
   }, [expenses, search, category, dateRange]);
 
+  /*
+   * Total Expenses
+   */
   const totalExpenses = useMemo(() => {
     return filteredExpenses.reduce(
       (total, expense) => total + expense.amount,
@@ -131,6 +166,9 @@ const Expenses = () => {
     );
   }, [filteredExpenses]);
 
+  /*
+   * Format Currency
+   */
   const formatAmount = (amount: number) => {
     return `₱${amount.toLocaleString('en-PH', {
       minimumFractionDigits: 2,
@@ -138,6 +176,9 @@ const Expenses = () => {
     })}`;
   };
 
+  /*
+   * Format Date
+   */
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString('en-PH', {
       month: 'short',
@@ -146,14 +187,67 @@ const Expenses = () => {
     });
   };
 
+  /*
+   * Get Category Icon
+   */
   const getCategoryIcon = (expenseCategory: ExpenseCategory) => {
     return categoryIcons[expenseCategory] ?? CircleDollarSign;
   };
 
+  /*
+   * Clear Filters
+   */
   const clearFilters = () => {
     setSearch('');
     setCategory('ALL');
     setDateRange(undefined);
+  };
+
+  /*
+   * Open Expense Details
+   */
+  const handleViewExpense = (expense: Expense) => {
+    setSelectedExpense(expense);
+    setIsDetailsOpen(true);
+  };
+
+  /*
+   * Close Expense Details
+   */
+  const handleDetailsOpenChange = (value: boolean) => {
+    setIsDetailsOpen(value);
+
+    if (!value) {
+      setSelectedExpense(null);
+    }
+  };
+
+  const handleEditExpense = (expense: Expense) => {
+    setSelectedExpense(expense);
+    setIsDetailsOpen(false);
+    setIsEditOpen(true);
+  };
+
+  const handleEditOpenChange = (value: boolean) => {
+    setIsEditOpen(value);
+
+    if (!value) {
+      setSelectedExpense(null);
+    }
+  };
+
+  const handleDeleteExpense = (expense: Expense) => {
+    setSelectedExpense(expense);
+    setIsDetailsOpen(false);
+    setIsDeleteOpen(true);
+  };
+
+  const handleDeleteOpenChange = (value: boolean) => {
+    setIsDeleteOpen(value);
+
+    if (!value) {
+      setSelectedExpense(null);
+    }
   };
 
   if (!householdId) {
@@ -162,14 +256,16 @@ const Expenses = () => {
 
   return (
     <div className="mx-auto w-full min-w-0 max-w-330">
-      {/* Page Header */}
+      {/* ========================================
+          PAGE HEADER
+      ======================================== */}
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="mb-2 text-xs font-semibold tracking-[0.18em] text-[#51705d] uppercase">
             Household finances
           </p>
 
-          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl text-slate-900">
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
             Expenses
           </h1>
 
@@ -178,14 +274,12 @@ const Expenses = () => {
           </p>
         </div>
 
-        {/* <Button className="w-full rounded-xl px-4 sm:w-auto" size="xl">
-          <Plus className="size-4" />
-          Add Expense
-        </Button> */}
         <AddExpenseDialog householdId={householdId} />
       </div>
 
-      {/* Summary */}
+      {/* ========================================
+          SUMMARY
+      ======================================== */}
       <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {/* Total Expenses */}
         <Card className="gap-0 rounded-2xl border-slate-200 shadow-none">
@@ -256,12 +350,14 @@ const Expenses = () => {
         </Card>
       </div>
 
-      {/* Filters */}
+      {/* ========================================
+          FILTERS
+      ======================================== */}
       <Card className="mb-6 gap-0 rounded-2xl border-slate-200 shadow-none">
         <CardContent className="p-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+            {/* Search */}
             <div className="w-full min-w-0 sm:basis-full xl:flex-1 xl:basis-0">
-              {/* Search */}
               <InputGroup className="h-10 flex-1 border-slate-200 bg-white">
                 <InputGroupAddon>
                   <Search className="size-4 text-slate-400" />
@@ -335,7 +431,7 @@ const Expenses = () => {
                 </PopoverContent>
               </Popover>
 
-              {/* Clear */}
+              {/* Clear Filters */}
               {(search || category !== 'ALL' || dateRange?.from) && (
                 <Button
                   variant="ghost"
@@ -351,7 +447,9 @@ const Expenses = () => {
         </CardContent>
       </Card>
 
-      {/* Loading */}
+      {/* ========================================
+          LOADING
+      ======================================== */}
       {isLoading && (
         <Card className="rounded-2xl border-slate-200 shadow-none">
           <CardContent className="flex min-h-56 items-center justify-center">
@@ -364,7 +462,9 @@ const Expenses = () => {
         </Card>
       )}
 
-      {/* Error */}
+      {/* ========================================
+          ERROR
+      ======================================== */}
       {isError && !isLoading && (
         <Card className="rounded-2xl border-red-100 shadow-none">
           <CardContent className="flex min-h-56 items-center justify-center">
@@ -381,7 +481,9 @@ const Expenses = () => {
         </Card>
       )}
 
-      {/* Empty */}
+      {/* ========================================
+          EMPTY STATE
+      ======================================== */}
       {!isLoading && !isError && filteredExpenses.length === 0 && (
         <Card className="rounded-2xl border-slate-200 shadow-none">
           <CardContent className="flex min-h-72 items-center justify-center">
@@ -403,14 +505,18 @@ const Expenses = () => {
               </p>
 
               {!search && category === 'ALL' && !dateRange?.from && (
-                <AddExpenseDialog householdId={householdId} />
+                <div className="mt-4">
+                  <AddExpenseDialog householdId={householdId} />
+                </div>
               )}
             </div>
           </CardContent>
         </Card>
       )}
 
-      {/* Expense List */}
+      {/* ========================================
+          EXPENSE LIST
+      ======================================== */}
       {!isLoading && !isError && filteredExpenses.length > 0 && (
         <Card className="gap-0 overflow-hidden rounded-2xl border-slate-200 shadow-none">
           <CardHeader className="border-b border-slate-100 px-5 py-4">
@@ -433,7 +539,8 @@ const Expenses = () => {
                 return (
                   <div
                     key={expense._id}
-                    className="grid grid-cols-[2.5rem_minmax(0,1fr)] items-start gap-x-3 gap-y-2 px-4 py-4 sm:flex sm:items-center sm:gap-4 sm:px-5 transition-colors hover:bg-slate-50/70"
+                    onClick={() => handleViewExpense(expense)}
+                    className="grid cursor-pointer grid-cols-[2.5rem_minmax(0,1fr)] items-start gap-x-3 gap-y-2 px-4 py-4 transition-colors hover:bg-slate-50/70 sm:flex sm:items-center sm:gap-4 sm:px-5"
                   >
                     {/* Icon */}
                     <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#f1f5eb] text-[#173f35]">
@@ -442,7 +549,7 @@ const Expenses = () => {
 
                     {/* Details */}
                     <div className="min-w-0 flex-1">
-                      <p className="break-words text-sm font-semibold sm:truncate text-slate-900">
+                      <p className="break-words text-sm font-semibold text-slate-900 sm:truncate">
                         {expense.description}
                       </p>
 
@@ -483,6 +590,31 @@ const Expenses = () => {
           </CardContent>
         </Card>
       )}
+
+      {/* ========================================
+          EXPENSE DETAILS DIALOG
+      ======================================== */}
+      <ExpenseDetailsDialog
+        expense={selectedExpense}
+        householdId={householdId}
+        open={isDetailsOpen}
+        onOpenChange={handleDetailsOpenChange}
+        onEdit={handleEditExpense}
+        onDelete={handleDeleteExpense}
+      />
+
+      <EditExpenseDialog
+        expense={selectedExpense}
+        householdId={householdId}
+        open={isEditOpen}
+        onOpenChange={handleEditOpenChange}
+      />
+
+      <DeleteExpenseDialog
+        expense={selectedExpense}
+        open={isDeleteOpen}
+        onOpenChange={handleDeleteOpenChange}
+      />
     </div>
   );
 };

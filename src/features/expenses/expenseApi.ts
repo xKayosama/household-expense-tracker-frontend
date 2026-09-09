@@ -18,6 +18,7 @@ export interface GetExpensesParams {
 export interface ExpensesParticipants {
   userId: string;
   amount: number;
+  percentage?: number | null;
 }
 
 export interface CreateExpenseRequest {
@@ -27,6 +28,18 @@ export interface CreateExpenseRequest {
   category: string;
   paidBy: string;
   splitType: string;
+  participants: ExpensesParticipants[];
+  date?: string;
+  notes?: string;
+}
+
+export interface UpdateExpenseRequest {
+  expenseId: string;
+  description: string;
+  amount: number;
+  category: ExpenseCategory;
+  paidBy: string;
+  splitType: ExpenseSplitType;
   participants: ExpensesParticipants[];
   date?: string;
   notes?: string;
@@ -65,7 +78,31 @@ export const expenseApi = api.injectEndpoints({
 
       invalidatesTags: ['Expense', 'Balance', 'Settlement', 'Dashboard'],
     }),
+
+    updateExpense: builder.mutation<unknown, UpdateExpenseRequest>({
+      query: ({ expenseId, ...body }) => ({
+        url: `/expenses/${expenseId}`,
+        method: 'PUT',
+        body,
+      }),
+
+      invalidatesTags: ['Expense', 'Balance', 'Settlement', 'Dashboard'],
+    }),
+
+    deleteExpense: builder.mutation<unknown, string>({
+      query: (expenseId) => ({
+        url: `/expenses/${expenseId}`,
+        method: 'DELETE',
+      }),
+
+      invalidatesTags: ['Expense', 'Balance', 'Settlement', 'Dashboard'],
+    }),
   }),
 });
 
-export const { useGetExpensesQuery, useCreateExpenseMutation } = expenseApi;
+export const {
+  useGetExpensesQuery,
+  useCreateExpenseMutation,
+  useUpdateExpenseMutation,
+  useDeleteExpenseMutation,
+} = expenseApi;

@@ -88,14 +88,11 @@ const Households = () => {
           <div>
             {/* Brand */}
             <div className="mb-6 flex items-center gap-1 text-lg font-semibold tracking-tight text-[#173f35]">
-              <span className="flex size-9 items-center justify-center rounded-xl bg-[#d5ebaa] text-[#173f35]">
-                <Home className="size-4" strokeWidth={2} />
-              </span>
-
-              <span>
-                HomeSplit
-                <span className="text-[#51705d]">.</span>
-              </span>
+              <img
+                src="/homesplit-logo-2.png"
+                alt="HomeSplit"
+                className="h-16  w-auto"
+              />
             </div>
 
             <p className="mb-2 text-xs font-semibold tracking-[0.18em] text-[#51705d] uppercase">
@@ -113,11 +110,7 @@ const Households = () => {
           </div>
 
           {/* Create Household */}
-          <Button
-            type="button"
-            className="rounded-xl px-6"
-            size='xl'
-          >
+          <Button type="button" className="rounded-xl px-6" size="xl">
             <Plus className="size-4" strokeWidth={2} />
             Create Household
           </Button>
@@ -157,7 +150,7 @@ const Households = () => {
               <Button
                 type="button"
                 className="mt-6 rounded-xl px-6 font-semibold"
-                size='xl'
+                size="xl"
               >
                 <Plus className="size-4" strokeWidth={2} />
                 Create Household
@@ -212,7 +205,7 @@ const Households = () => {
                   <Button
                     type="button"
                     className="w-full rounded-xl font-semibold"
-                    size='xl'
+                    size="xl"
                     onClick={() => handleSelectHousehold(household)}
                   >
                     Open Household

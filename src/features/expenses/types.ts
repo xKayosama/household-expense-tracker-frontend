@@ -10,15 +10,12 @@ export type ExpenseCategory =
   | 'SHOPPING'
   | 'OTHERS';
 
-export type ExpenseSplitType =
-  | 'EQUAL'
-  | 'EXACT'
-  | 'PERCENTAGE';
+export type ExpenseSplitType = 'EQUAL' | 'EXACT' | 'PERCENTAGE';
 
 export interface ExpenseParticipant {
-  userId: string;
+  userId: string | ExpenseUser;
   amount: number;
-  percentage: number | null;
+  percentage?: number | null;
 }
 
 export interface ExpenseUser {
