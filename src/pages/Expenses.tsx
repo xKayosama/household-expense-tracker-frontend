@@ -21,11 +21,9 @@ import type { DateRange } from 'react-day-picker';
 
 import { useAppSelector } from '@/app/hooks';
 import { useGetExpensesQuery } from '@/features/expenses/expenseApi';
+import AddExpenseDialog from '@/features/expenses/components/AddExpenseDialog';
 
-import type {
-  Expense,
-  ExpenseCategory,
-} from '@/features/expenses/types';
+import type { Expense, ExpenseCategory } from '@/features/expenses/types';
 
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -163,7 +161,7 @@ const Expenses = () => {
   }
 
   return (
-    <div className="mx-auto w-full max-w-8xl">
+    <div className="mx-auto w-full min-w-0 max-w-330">
       {/* Page Header */}
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
@@ -171,7 +169,7 @@ const Expenses = () => {
             Household finances
           </p>
 
-          <h1 className="text-3xl font-semibold tracking-tight text-slate-900">
+          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl text-slate-900">
             Expenses
           </h1>
 
@@ -180,10 +178,11 @@ const Expenses = () => {
           </p>
         </div>
 
-        <Button className="rounded-xl px-4" size="xl">
+        {/* <Button className="w-full rounded-xl px-4 sm:w-auto" size="xl">
           <Plus className="size-4" />
           Add Expense
-        </Button>
+        </Button> */}
+        <AddExpenseDialog householdId={householdId} />
       </div>
 
       {/* Summary */}
@@ -198,7 +197,7 @@ const Expenses = () => {
           </CardHeader>
 
           <CardContent className="px-5 pb-5">
-            <p className="text-2xl font-semibold tracking-tight text-slate-900">
+            <p className="break-words text-2xl font-semibold tracking-tight text-slate-900">
               {formatAmount(totalExpenses)}
             </p>
 
@@ -219,18 +218,16 @@ const Expenses = () => {
           </CardHeader>
 
           <CardContent className="px-5 pb-5">
-            <p className="text-2xl font-semibold tracking-tight text-slate-900">
+            <p className="break-words text-2xl font-semibold tracking-tight text-slate-900">
               {filteredExpenses.length}
             </p>
 
-            <p className="mt-1 text-xs text-slate-400">
-              Matching expenses
-            </p>
+            <p className="mt-1 text-xs text-slate-400">Matching expenses</p>
           </CardContent>
         </Card>
 
         {/* Current View */}
-        <Card className="hidden gap-0 rounded-2xl border-slate-200 shadow-none sm:block">
+        <Card className="gap-0 rounded-2xl border-slate-200 shadow-none sm:col-span-2 lg:col-span-1">
           <CardHeader className="px-5 pt-5 pb-2">
             <CardTitle className="flex items-center gap-2 text-sm font-medium text-slate-500">
               <CalendarDays className="size-4 text-[#51705d]" />
@@ -239,7 +236,7 @@ const Expenses = () => {
           </CardHeader>
 
           <CardContent className="px-5 pb-5">
-            <p className="text-2xl font-semibold tracking-tight text-slate-900">
+            <p className="break-words text-2xl font-semibold tracking-tight text-slate-900">
               {dateRange?.from
                 ? dateRange.to
                   ? `${format(dateRange.from, 'MMM d')} - ${format(
@@ -262,21 +259,22 @@ const Expenses = () => {
       {/* Filters */}
       <Card className="mb-6 gap-0 rounded-2xl border-slate-200 shadow-none">
         <CardContent className="p-4">
-          <div className="flex flex-col gap-3 lg:flex-row justify-end">
-            <div className='w-1/4'>
-                {/* Search */}
-            <InputGroup className="h-10 flex-1 border-slate-200 bg-white">
-              <InputGroupAddon>
-                <Search className="size-4 text-slate-400" />
-              </InputGroupAddon>
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+            <div className="w-full min-w-0 sm:basis-full xl:flex-1 xl:basis-0">
+              {/* Search */}
+              <InputGroup className="h-10 flex-1 border-slate-200 bg-white">
+                <InputGroupAddon>
+                  <Search className="size-4 text-slate-400" />
+                </InputGroupAddon>
 
-              <InputGroupInput
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-                placeholder="Search expenses..."
-                className="text-sm focus-visible:ring-0"
-              />
-            </InputGroup>
+                <InputGroupInput
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                  placeholder="Search expenses..."
+                  aria-label="Search expenses"
+                  className="text-base focus-visible:ring-0 sm:text-sm"
+                />
+              </InputGroup>
             </div>
 
             {/* Category */}
@@ -285,7 +283,8 @@ const Expenses = () => {
               onChange={(event) =>
                 setCategory(event.target.value as ExpenseCategory | 'ALL')
               }
-              className=""
+              aria-label="Filter by category"
+              className="w-full sm:w-48 [&_select]:text-base sm:[&_select]:text-sm"
             >
               <NativeSelectOption value="ALL">
                 All categories
@@ -298,53 +297,56 @@ const Expenses = () => {
               ))}
             </NativeSelect>
 
-          <div className='items-center flex gap-1'>
+            <div className="flex min-w-0 flex-col gap-2 sm:flex-1 sm:flex-row sm:items-center sm:justify-end">
               {/* Date Range */}
-            <Popover>
-              <PopoverTrigger>
-                <Button
-                  variant="outline"
-                  className="h-10 w-full justify-start rounded-xl font-normal sm:w-64"
+              <Popover>
+                <PopoverTrigger
+                  render={<Button variant="outline" />}
+                  className="h-11 w-full min-w-0 justify-start rounded-xl font-normal sm:h-10 sm:w-auto"
                 >
                   <CalendarDays className="size-4" />
 
-                  {dateRange?.from ? (
-                    dateRange.to ? (
-                      <>
-                        {format(dateRange.from, 'MMM d, yyyy')} -{' '}
-                        {format(dateRange.to, 'MMM d, yyyy')}
-                      </>
+                  <span className="min-w-0 truncate">
+                    {dateRange?.from ? (
+                      dateRange.to ? (
+                        <>
+                          {format(dateRange.from, 'MMM d, yyyy')} -{' '}
+                          {format(dateRange.to, 'MMM d, yyyy')}
+                        </>
+                      ) : (
+                        format(dateRange.from, 'MMM d, yyyy')
+                      )
                     ) : (
-                      format(dateRange.from, 'MMM d, yyyy')
-                    )
-                  ) : (
-                    'Select date range'
-                  )}
+                      'Select date range'
+                    )}
+                  </span>
+                </PopoverTrigger>
+
+                <PopoverContent
+                  className="max-h-[min(80dvh,42rem)] w-auto max-w-[calc(100vw-2rem)] overflow-auto p-0"
+                  align="end"
+                >
+                  <Calendar
+                    mode="range"
+                    selected={dateRange}
+                    onSelect={setDateRange}
+                    numberOfMonths={2}
+                  />
+                </PopoverContent>
+              </Popover>
+
+              {/* Clear */}
+              {(search || category !== 'ALL' || dateRange?.from) && (
+                <Button
+                  variant="ghost"
+                  size="xl"
+                  onClick={clearFilters}
+                  className="h-11 w-full rounded-xl sm:h-10 sm:w-auto"
+                >
+                  Clear
                 </Button>
-              </PopoverTrigger>
-
-              <PopoverContent className="w-auto p-0" align="end">
-                <Calendar
-                  mode="range"
-                  selected={dateRange}
-                  onSelect={setDateRange}
-                  numberOfMonths={2}
-                />
-              </PopoverContent>
-            </Popover>
-
-            {/* Clear */}
-            {(search || category !== 'ALL' || dateRange?.from) && (
-              <Button
-                variant="ghost"
-                size="xl"
-                onClick={clearFilters}
-                className="rounded-xl"
-              >
-                Clear
-              </Button>
-            )}
-          </div>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -356,9 +358,7 @@ const Expenses = () => {
             <div className="text-center">
               <div className="mx-auto mb-3 size-7 animate-spin rounded-full border-2 border-slate-200 border-t-[#173f35]" />
 
-              <p className="text-sm text-slate-500">
-                Loading expenses...
-              </p>
+              <p className="text-sm text-slate-500">Loading expenses...</p>
             </div>
           </CardContent>
         </Card>
@@ -403,10 +403,7 @@ const Expenses = () => {
               </p>
 
               {!search && category === 'ALL' && !dateRange?.from && (
-                <Button className="mt-5 rounded-xl">
-                  <Plus className="size-4" />
-                  Add Expense
-                </Button>
+                <AddExpenseDialog householdId={householdId} />
               )}
             </div>
           </CardContent>
@@ -436,42 +433,41 @@ const Expenses = () => {
                 return (
                   <div
                     key={expense._id}
-                    className="flex items-center gap-4 px-5 py-4 transition-colors hover:bg-slate-50/70"
+                    className="grid grid-cols-[2.5rem_minmax(0,1fr)] items-start gap-x-3 gap-y-2 px-4 py-4 sm:flex sm:items-center sm:gap-4 sm:px-5 transition-colors hover:bg-slate-50/70"
                   >
                     {/* Icon */}
                     <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#f1f5eb] text-[#173f35]">
-                      <Icon
-                        className="size-4"
-                        strokeWidth={1.8}
-                      />
+                      <Icon className="size-4" strokeWidth={1.8} />
                     </div>
 
                     {/* Details */}
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold text-slate-900">
+                      <p className="break-words text-sm font-semibold sm:truncate text-slate-900">
                         {expense.description}
                       </p>
 
-                      <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-400">
-                        <span>
-                          {categoryLabels[expense.category]}
-                        </span>
+                      <div className="mt-1 flex flex-col items-start gap-x-2 gap-y-1 break-words text-xs text-slate-400 sm:flex-row sm:flex-wrap sm:items-center">
+                        <span>{categoryLabels[expense.category]}</span>
 
-                        <span>•</span>
+                        <span className="hidden sm:inline" aria-hidden="true">
+                          •
+                        </span>
 
                         <span>
                           Paid by {expense.paidBy.firstName}{' '}
                           {expense.paidBy.lastName}
                         </span>
 
-                        <span>•</span>
+                        <span className="hidden sm:inline" aria-hidden="true">
+                          •
+                        </span>
 
                         <span>{formatDate(expense.date)}</span>
                       </div>
                     </div>
 
                     {/* Amount */}
-                    <div className="shrink-0 text-right">
+                    <div className="col-start-2 flex min-w-0 flex-wrap items-baseline justify-between gap-x-3 sm:block sm:shrink-0 sm:text-right">
                       <p className="text-sm font-semibold text-slate-900">
                         {formatAmount(expense.amount)}
                       </p>

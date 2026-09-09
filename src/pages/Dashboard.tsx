@@ -115,7 +115,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="mx-auto w-full max-w-8xl space-y-8">
+    <div className="mx-auto w-full max-w-330 space-y-8">
       {/* Header */}
       <div>
         <p className="text-xs font-semibold tracking-[0.18em] text-[#51705d] uppercase">

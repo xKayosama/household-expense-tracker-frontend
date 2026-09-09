@@ -35,7 +35,14 @@ export interface CreateExpenseRequest {
 export const expenseApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getExpenses: builder.query<ExpensesResponse, GetExpensesParams>({
-      query: ({ householdId, page = 1, limit = 10, category, startDate, endDate }) => ({
+      query: ({
+        householdId,
+        page = 1,
+        limit = 10,
+        category,
+        startDate,
+        endDate,
+      }) => ({
         url: `/households/${householdId}/expenses`,
         params: {
           page,
