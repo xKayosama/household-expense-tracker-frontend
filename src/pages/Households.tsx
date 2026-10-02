@@ -89,8 +89,8 @@ const Households = () => {
             {/* Brand */}
             <div className="mb-6 flex items-center gap-1 text-lg font-semibold tracking-tight text-[#173f35]">
               <img
-                src="/homesplit-logo-2.png"
-                alt="HomeSplit"
+                src="/divvy-logo.png"
+                alt="Tahanan"
                 className="h-16  w-auto"
               />
             </div>

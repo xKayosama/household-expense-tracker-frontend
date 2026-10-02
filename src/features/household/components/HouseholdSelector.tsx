@@ -31,27 +31,27 @@ const HouseholdSelector = () => {
         onClick={() => setIsOpen((previous) => !previous)}
         aria-expanded={isOpen}
         aria-haspopup="menu"
-        className="group flex items-center cursor-pointer gap-3 rounded-xl px-2 py-1.5 transition-colors hover:bg-[#f1f5eb]"
+        className="group flex cursor-pointer items-center gap-3 rounded-xl px-2 py-1.5 transition-colors hover:bg-secondary"
       >
         {/* Icon */}
-        <span className="flex size-9 items-center justify-center rounded-xl bg-[#f1f5eb] text-[#173f35] transition-colors group-hover:bg-[#d5ebaa]">
+        <span className="flex size-9 items-center justify-center rounded-xl bg-secondary text-secondary-foreground transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
           <Home className="size-4" strokeWidth={1.8} />
         </span>
 
         {/* Household Name */}
         <div className="hidden text-left sm:block">
-          <p className="text-[10px] font-semibold tracking-[0.15em] text-[#51705d] uppercase">
+          <p className="text-[10px] font-semibold tracking-[0.15em] text-muted-foreground uppercase">
             Household
           </p>
 
           <div className="flex items-center gap-1">
-            <p className="max-w-48 truncate text-sm font-semibold text-slate-900">
+            <p className="max-w-48 truncate text-sm font-semibold text-foreground">
               {selectedHousehold?.name ?? 'Select Household'}
             </p>
 
             <ChevronDown
               className={[
-                'size-3.5 text-slate-400 transition-transform',
+                'size-3.5 text-muted-foreground transition-transform',
                 isOpen ? 'rotate-180' : '',
               ].join(' ')}
               strokeWidth={2}
@@ -62,7 +62,7 @@ const HouseholdSelector = () => {
         {/* Mobile Chevron */}
         <ChevronDown
           className={[
-            'size-4 text-slate-400 transition-transform sm:hidden',
+            'size-4 text-muted-foreground transition-transform sm:hidden',
             isOpen ? 'rotate-180' : '',
           ].join(' ')}
           strokeWidth={2}
@@ -72,23 +72,23 @@ const HouseholdSelector = () => {
       {/* Dropdown */}
       {isOpen && (
         <div
-          className="absolute top-full left-0 z-50 mt-2 w-72 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg"
+          className="absolute top-full left-0 z-50 mt-2 w-72 overflow-hidden rounded-2xl border border-border bg-popover text-popover-foreground shadow-lg"
           role="menu"
         >
           {/* Header */}
-          <div className="border-b border-slate-100 px-4 py-3">
-            <p className="text-xs font-semibold tracking-[0.15em] text-[#51705d] uppercase">
+          <div className="border-b border-border px-4 py-3">
+            <p className="text-xs font-semibold tracking-[0.15em] text-muted-foreground uppercase">
               Your Households
             </p>
 
-            <p className="mt-1 text-xs text-slate-400">
+            <p className="mt-1 text-xs text-muted-foreground">
               Choose where you want to manage expenses.
             </p>
           </div>
 
           {/* Loading */}
           {isLoading && (
-            <div className="flex items-center justify-center gap-2 px-4 py-6 text-sm text-slate-400">
+            <div className="flex items-center justify-center gap-2 px-4 py-6 text-sm text-muted-foreground">
               <LoaderCircle
                 className="size-4 animate-spin"
                 aria-hidden="true"
@@ -101,11 +101,11 @@ const HouseholdSelector = () => {
           {/* Error */}
           {isError && (
             <div className="px-4 py-6 text-center">
-              <p className="text-sm font-medium text-red-600">
+              <p className="text-sm font-medium text-destructive">
                 Failed to load households.
               </p>
 
-              <p className="mt-1 text-xs text-slate-400">
+              <p className="mt-1 text-xs text-muted-foreground">
                 Please try again later.
               </p>
             </div>
@@ -114,13 +114,13 @@ const HouseholdSelector = () => {
           {/* Empty */}
           {!isLoading && !isError && households.length === 0 && (
             <div className="px-4 py-6 text-center">
-              <Home className="mx-auto size-5 text-slate-300" />
+              <Home className="mx-auto size-5 text-muted-foreground/50" />
 
-              <p className="mt-2 text-sm font-medium text-slate-600">
+              <p className="mt-2 text-sm font-medium text-foreground">
                 No households found.
               </p>
 
-              <p className="mt-1 text-xs text-slate-400">
+              <p className="mt-1 text-xs text-muted-foreground">
                 Create or join a household to get started.
               </p>
             </div>
@@ -139,8 +139,8 @@ const HouseholdSelector = () => {
                     role="menuitem"
                     onClick={() => handleSelectHousehold(household)}
                     className={[
-                      'flex w-full items-center gap-3 cursor-pointer rounded-xl px-3 py-3 text-left transition-colors',
-                      isSelected ? 'bg-[#f1f5eb]' : 'hover:bg-slate-50',
+                      'flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-3 text-left transition-colors',
+                      isSelected ? 'bg-secondary' : 'hover:bg-muted',
                     ].join(' ')}
                   >
                     {/* Icon */}
@@ -148,8 +148,8 @@ const HouseholdSelector = () => {
                       className={[
                         'flex size-9 shrink-0 items-center justify-center rounded-xl transition-colors',
                         isSelected
-                          ? 'bg-[#d5ebaa] text-[#173f35]'
-                          : 'bg-slate-100 text-slate-500',
+                          ? 'bg-primary text-primary-foreground'
+                          : 'bg-muted text-muted-foreground',
                       ].join(' ')}
                     >
                       <Home className="size-4" strokeWidth={1.8} />
@@ -160,13 +160,15 @@ const HouseholdSelector = () => {
                       <p
                         className={[
                           'truncate text-sm font-semibold',
-                          isSelected ? 'text-[#173f35]' : 'text-slate-700',
+                          isSelected
+                            ? 'text-secondary-foreground'
+                            : 'text-foreground',
                         ].join(' ')}
                       >
                         {household.name}
                       </p>
 
-                      <p className="mt-0.5 text-xs text-slate-400">
+                      <p className="mt-0.5 text-xs text-muted-foreground">
                         {household.currency}
                       </p>
                     </div>
@@ -174,7 +176,7 @@ const HouseholdSelector = () => {
                     {/* Selected */}
                     {isSelected && (
                       <Check
-                        className="size-4 shrink-0 text-[#51705d]"
+                        className="size-4 shrink-0 text-primary"
                         strokeWidth={2.2}
                       />
                     )}

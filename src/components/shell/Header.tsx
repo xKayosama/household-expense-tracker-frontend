@@ -1,35 +1,55 @@
-import { UserCircle } from 'lucide-react';
+import { Menu, UserCircle } from 'lucide-react';
 
 import { useAppSelector } from '@/app/hooks';
+
 import HouseholdSelector from '@/features/household/components/HouseholdSelector';
 
-const Header = () => {
+import { Button } from '@/components/ui/button';
+
+interface HeaderProps {
+  onMenuClick: () => void;
+}
+
+const Header = ({ onMenuClick }: HeaderProps) => {
   const user = useAppSelector((state) => state.auth.user);
 
   return (
-    <header className="relative flex h-16 shrink-0 items-center justify-between border-b border-slate-100 bg-white px-4 sm:pr-5 sm:pl-3">
+    <header className="relative flex h-16 shrink-0 items-center gap-2 border-b border-border bg-background px-3 sm:px-4 lg:px-5">
+      {/* Mobile Menu */}
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        onClick={onMenuClick}
+        aria-label="Open navigation"
+        className="shrink-0 rounded-xl text-muted-foreground hover:bg-secondary hover:text-secondary-foreground lg:hidden"
+      >
+        <Menu className="size-5" />
+      </Button>
+
       {/* Household */}
-      <HouseholdSelector />
+      <div className="min-w-0 flex-1">
+        <HouseholdSelector />
+      </div>
 
       {/* User */}
-      <div className="flex items-center gap-3">
+      <div className="flex shrink-0 items-center gap-3">
         <div className="hidden text-right sm:block">
-          <p className="text-sm font-semibold text-slate-900">
+          <p className="max-w-40 truncate text-sm font-semibold text-foreground">
             {user ? `${user.firstName} ${user.lastName}` : 'User'}
           </p>
 
-          <p className="text-xs text-slate-400">Household Member</p>
+          <p className="text-xs text-muted-foreground">Household Member</p>
         </div>
 
-        {/* Avatar */}
         {user?.avatar ? (
           <img
             src={user.avatar}
             alt={`${user.firstName} ${user.lastName}`}
-            className="size-9 rounded-full object-cover ring-2 ring-[#f1f5eb]"
+            className="size-9 shrink-0 rounded-full object-cover ring-2 ring-secondary"
           />
         ) : (
-          <div className="flex size-9 items-center justify-center rounded-full bg-[#173f35] text-sm font-semibold text-[#d5ebaa]">
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
             {user?.firstName ? (
               user.firstName.charAt(0).toUpperCase()
             ) : (

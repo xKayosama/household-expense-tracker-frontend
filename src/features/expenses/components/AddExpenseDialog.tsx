@@ -314,7 +314,7 @@ const AddExpenseDialog = ({ householdId }: AddExpenseDialogProps) => {
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger
         render={
-          <Button className="h-10 rounded-xl bg-[#173f35] px-4 text-sm font-semibold text-white hover:bg-[#245646]" />
+          <Button className="h-10 rounded-xl  px-4 text-sm font-semibold text-white " />
         }
       >
         <Plus className="size-4" />

@@ -91,8 +91,8 @@ const Login = () => {
           />
           <div className="relative inline-flex w-fit items-center rounded-2xl bg-[#f8f9f6] px-4 py-2">
             <img
-              src="/homesplit-logo-2.png"
-              alt="HomeSplit"
+              src="/divvy-logo.png"
+              alt="Tahanan"
               className="h-16  w-auto"
             />
           </div>
@@ -124,7 +124,7 @@ const Login = () => {
                   A happier household
                 </span>
                 <span className="rounded-full bg-white/10 px-2 py-1 text-[10px] tracking-wider uppercase">
-                  The HomeSplit way
+                  The Tahanan way
                 </span>
               </div>
               {[
@@ -165,7 +165,7 @@ const Login = () => {
                 <h1 id="login-heading">Welcome back</h1>
               </CardTitle>
               <CardDescription className="mt-3 text-sm leading-6 text-slate-500">
-                Sign in to your HomeSplit account.
+                Sign in to your Tahanan account.
                 <br />
                 Let’s get your household sorted.
               </CardDescription>

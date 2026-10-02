@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   CalendarDays,
   Car,
@@ -30,16 +30,23 @@ import DeleteExpenseDialog from '@/features/expenses/components/DeleteExpenseDia
 import type { Expense, ExpenseCategory } from '@/features/expenses/types';
 
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 import { Calendar } from '@/components/ui/calendar';
-
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+  PaginationEllipsis,
+} from '@/components/ui/pagination';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-
 import {
   InputGroup,
   InputGroupAddon,
@@ -102,14 +109,18 @@ const Expenses = () => {
 
   const [isEditOpen, setIsEditOpen] = useState(false);
 
+  const [page, setPage] = useState(1);
+
+  const limit = 50;
+
   /*
    * Expenses API
    */
   const { data, isLoading, isFetching, isError } = useGetExpensesQuery(
     {
       householdId: householdId ?? '',
-      page: 1,
-      limit: 50,
+      page,
+      limit,
 
       category: category === 'ALL' ? undefined : category,
 
@@ -126,6 +137,26 @@ const Expenses = () => {
   );
 
   const expenses = data?.data.expenses ?? [];
+
+  const pagination = data?.pagination;
+
+  const totalPages = pagination?.totalPages ?? 1;
+
+  const totalExpenseCount = pagination?.total ?? 0;
+
+  const hasNextPage = pagination?.hasNextPage ?? false;
+
+  const hasPreviousPage = pagination?.hasPreviousPage ?? false;
+
+  useEffect(() => {
+    setPage(1);
+  }, [category, dateRange]);
+
+  useEffect(() => {
+    if (page > totalPages) {
+      setPage(Math.max(totalPages, 1));
+    }
+  }, [page, totalPages]);
 
   /*
    * Filter Expenses
@@ -250,6 +281,39 @@ const Expenses = () => {
     }
   };
 
+  const getPaginationItems = () => {
+    const pages: (number | 'ellipsis')[] = [];
+
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+
+      return pages;
+    }
+
+    pages.push(1);
+
+    if (page > 4) {
+      pages.push('ellipsis');
+    }
+
+    const start = Math.max(2, page - 1);
+    const end = Math.min(totalPages - 1, page + 1);
+
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+
+    if (page < totalPages - 3) {
+      pages.push('ellipsis');
+    }
+
+    pages.push(totalPages);
+
+    return pages;
+  };
+
   if (!householdId) {
     return null;
   }
@@ -261,15 +325,18 @@ const Expenses = () => {
       ======================================== */}
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="mb-2 text-xs font-semibold tracking-[0.18em] text-[#51705d] uppercase">
+          <Label
+            htmlFor="Household finances"
+            className="text-xs font-semibold tracking-[0.18em] text-primary uppercase"
+          >
             Household finances
-          </p>
+          </Label>
 
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
+          <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground">
             Expenses
           </h1>
 
-          <p className="mt-2 text-sm text-slate-500">
+          <p className="mt-2 text-sm text-muted-foreground">
             Keep track of everything your household spends.
           </p>
         </div>
@@ -313,10 +380,12 @@ const Expenses = () => {
 
           <CardContent className="px-5 pb-5">
             <p className="break-words text-2xl font-semibold tracking-tight text-slate-900">
-              {filteredExpenses.length}
+              {totalExpenseCount}
             </p>
 
-            <p className="mt-1 text-xs text-slate-400">Matching expenses</p>
+            <p className="mt-1 text-xs text-slate-400">
+              Total matching expenses
+            </p>
           </CardContent>
         </Card>
 
@@ -587,6 +656,109 @@ const Expenses = () => {
                 );
               })}
             </div>
+
+            {totalPages > 1 && (
+              <div className="flex flex-col gap-4 border-t border-slate-100 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+                {/* Result count */}
+                <p className="shrink-0 text-xs text-slate-400">
+                  Showing{' '}
+                  <span className="font-medium text-slate-600">
+                    {(page - 1) * limit + 1}
+                  </span>
+                  {' - '}
+                  <span className="font-medium text-slate-600">
+                    {Math.min(page * limit, totalExpenseCount)}
+                  </span>{' '}
+                  of{' '}
+                  <span className="font-medium text-slate-600">
+                    {totalExpenseCount}
+                  </span>{' '}
+                  expenses
+                </p>
+
+                {/* Pagination */}
+                <Pagination className="mx-0 w-auto justify-start sm:justify-end">
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious
+                        href="#"
+                        onClick={(event) => {
+                          event.preventDefault();
+
+                          if (!hasPreviousPage || isFetching) {
+                            return;
+                          }
+
+                          setPage((current) => Math.max(1, current - 1));
+                        }}
+                        className={
+                          !hasPreviousPage || isFetching
+                            ? 'pointer-events-none opacity-50'
+                            : 'cursor-pointer'
+                        }
+                      />
+                    </PaginationItem>
+
+                    {getPaginationItems().map((item, index) => {
+                      if (item === 'ellipsis') {
+                        return (
+                          <PaginationItem key={`ellipsis-${index}`}>
+                            <PaginationEllipsis />
+                          </PaginationItem>
+                        );
+                      }
+
+                      return (
+                        <PaginationItem key={item}>
+                          <PaginationLink
+                            href="#"
+                            isActive={page === item}
+                            onClick={(event) => {
+                              event.preventDefault();
+
+                              if (isFetching) {
+                                return;
+                              }
+
+                              setPage(item);
+                            }}
+                            className={
+                              page === item
+                                ? 'cursor-pointer border-[#173f35] bg-[#173f35] text-white hover:bg-[#245646] hover:text-white'
+                                : 'cursor-pointer'
+                            }
+                          >
+                            {item}
+                          </PaginationLink>
+                        </PaginationItem>
+                      );
+                    })}
+
+                    <PaginationItem>
+                      <PaginationNext
+                        href="#"
+                        onClick={(event) => {
+                          event.preventDefault();
+
+                          if (!hasNextPage || isFetching) {
+                            return;
+                          }
+
+                          setPage((current) =>
+                            Math.min(totalPages, current + 1),
+                          );
+                        }}
+                        className={
+                          !hasNextPage || isFetching
+                            ? 'pointer-events-none opacity-50'
+                            : 'cursor-pointer'
+                        }
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              </div>
+            )}
           </CardContent>
         </Card>
       )}
